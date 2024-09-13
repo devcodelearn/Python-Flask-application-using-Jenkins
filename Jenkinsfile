@@ -37,6 +37,7 @@ pipeline {
                     // Build Docker image
                     //dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${env.BUILD_ID}")
                     dockerImage = docker.build('devcodelearn/python-flask-application-using-jenkins')
+                    // sh 'sudo docker build -t devcodelearn/python-flask-application-using-jenkins .'
                 }
             }
         }
@@ -63,8 +64,9 @@ pipeline {
                     // Deploy the application as a Docker container
                     sh """
                     docker stop Python-Flask-application-using-Jenkins || true && docker rm Python-Flask-application-using-Jenkins || true
-                    docker run -d -p 5000:5000 --name Python-Flask-application-using-Jenkins ${DOCKER_IMAGE_NAME}:latest
+                    docker run -d -p 5000:5000 --name python-flask-application-using-jenkins ${DOCKER_IMAGE_NAME}:latest
                     """
+
                 }
             }
         }
