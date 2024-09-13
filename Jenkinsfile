@@ -63,7 +63,7 @@ pipeline {
                 script {
                     // Deploy the application as a Docker container
                     sh """
-                    docker stop Python-Flask-application-using-Jenkins || true && docker rm Python-Flask-application-using-Jenkins || true
+                    docker stop python-flask-application-using-Jenkins || true && docker rm python-flask-application-using-Jenkins || true
                     docker run -d -p 5000:5000 --name python-flask-application-using-jenkins ${DOCKER_IMAGE_NAME}:latest
                     """
 
