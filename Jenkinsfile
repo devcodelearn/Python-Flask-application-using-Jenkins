@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE_NAME = 'devcodelearn/python-flask-application-using-Jenkins'
+        DOCKER_IMAGE_NAME = 'devcodelearn/python-flask-application-using-jenkins'
     }
 
     stages {
@@ -66,6 +66,8 @@ pipeline {
                     docker stop python-flask-application-using-Jenkins || true && docker rm python-flask-application-using-Jenkins || true
                     docker run -d -p 5000:5000 --name python-flask-application-using-jenkins ${DOCKER_IMAGE_NAME}:latest
                     """
+                    //docker run -d -p 5000:5000 --name python-flask-application-using-jenkins devcodelearn/python-flask-application-using-jenkins:latest
+                    
 
                 }
             }
