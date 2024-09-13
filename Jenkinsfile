@@ -8,8 +8,11 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                // Clone the repository from GitHub
-                git 'https://github.com/devcodelearn/Python-Flask-application-using-Jenkins.git'
+                // Clone the repository from GitHub using credentials
+                withCredentials([usernamePassword(credentialsId: 'Jenkins_PAT', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                    git branch: 'main',
+                        url: "https://${GIT_USER}:${GIT_TOKEN}@github.com/devcodelearn/Python-Flask-application-using-Jenkins.git"
+                }
             }
         }
 
