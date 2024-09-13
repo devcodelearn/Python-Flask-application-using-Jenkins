@@ -9,7 +9,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Clone the repository from GitHub using credentials
-                withCredentials([string(credentialsId: 'githubnew', variable: 'GITHUB_PAT')]) {
+                withCredentials([string(credentialsId: 'jenkin1Github1', variable: 'GITHUB_PAT')]) {
                     git branch: 'main',
                         url: "https://${GITHUB_PAT}@github.com/devcodelearn/Python-Flask-application-using-Jenkins.git"
                 }
