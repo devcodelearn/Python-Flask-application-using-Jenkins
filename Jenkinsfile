@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE_NAME = 'devcodelearn/Python-Flask-application-using-Jenkins'
+        DOCKER_IMAGE_NAME = 'devcodelearn/python-flask-application-using-Jenkins'
     }
 
     stages {
