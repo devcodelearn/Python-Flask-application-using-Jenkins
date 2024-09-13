@@ -9,7 +9,45 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Clone the repository from GitHub using credentials
-                withCredentials([usernamePassword(credentialsId: 'Jenkins_PAT', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                withCredentials([usernamePassword(credentialsId: 'Jenkins_PAT', usernameVariable: 'GIT_USER', papipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE_NAME = 'devcodelearn/Python-Flask-application-using-Jenkins'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                // Clone the repository from GitHub using credentials
+                withCredentials([string(credentialsId: '45fff35f-7b73-48b2-9193-62699a896d1b', variable: 'GITHUB_PAT')]) {
+                    git branch: 'main',
+                        url: "https://github.com/devcodelearn/Python-Flask-application-using-Jenkins.git",
+                        credentialsId: '45fff35f-7b73-48b2-9193-62699a896d1b'
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                // Install Python dependencies
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                // Run unit tests using pytest
+                sh 'pytest --maxfail=1 --disable-warnings'
+            }
+        }
+
+        stage('Dockerize the App') {
+            steps {
+                script {
+                    // Build Docker image
+                    dockerImage = docker.build("${DOCKER_IMAGE_NAME
+sswordVariable: 'GIT_TOKEN')]) {
                     git branch: 'main',
                         url: "https://${GIT_USER}:${GIT_TOKEN}@github.com/devcodelearn/Python-Flask-application-using-Jenkins.git"
                 }
