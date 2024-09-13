@@ -8,7 +8,6 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                // Clone the repository from GitHub using credentials
                 withCredentials([string(credentialsId: 'jenkin1Github1', variable: 'GITHUB_PAT')]) {
                     git branch: 'main',
                         url: "https://${GITHUB_PAT}@github.com/devcodelearn/Python-Flask-application-using-Jenkins.git"
@@ -25,8 +24,10 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                // Run unit tests using pytest
-                sh 'pytest --maxfail=1 --disable-warnings'
+                // Add local bin directory to PATH
+                withEnv(['PATH+LOCAL_BIN=/var/lib/jenkins/.local/bin']) {
+                    sh 'pytest --maxfail=1 --disable-warnings'
+                }
             }
         }
 
