@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     // Use Jenkins credentials to log in to DockerHub
-                    withCredentials([usernamePassword(credentialsId: 'Docker_credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_TOKEN')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker_pat', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_TOKEN')]) {
                         // Log in to DockerHub using username and secret token (key)
                         sh "echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin"
                         
