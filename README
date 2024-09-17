@@ -1,0 +1,176 @@
+Project: AZURE-Run a (CI/CD) Pipeline on an Azure VM using Jenkins
+
+Step-by-step Implementation: 
+
+Step 1: Create an Azure VM
+To create a Resource Group: az group create --name CICDResourceGroup --location westus
+ 
+To create a VM using username and password: az vm create --resource-group CICDResourceGroup --name CICDVM --image Ubuntu2204 --admin-username cicduser --admin-password CICDPassword123!
+ 
+Step 2: Open Ports for CI/CD Pipeline
+	Open port 22 for SSH access:
+az vm open-port --port 22 --resource-group CICDResourceGroup --name CICDVM --priority 900
+
+	Open other necessary ports for CI/CD tools (e.g., port 8080 for Jenkins, port 5000 for GitLab):
+ •  Port 22 (SSH) – For Git commands like git clone, git pull, and git push using SSH.
+•  Port 443 (HTTPS) – For Git commands using HTTPS or for GitHub webhooks over HTTPS.
+•  Port 80 (HTTP) – If using webhooks over HTTP (but HTTPS is preferred).
+       az vm open-port --port 8080 --resource-group CICDResourceGroup --name CICDVM --priority 901
+
+
+Step 3: Connect to the VM
+ SSH into the VM: ssh cicduser@<public-ip-address>
+When prompted, enter the password: CICDPassword123!
+ 
+Step 4: Install CI/CD Tools (Example: Jenkins)
+Copy Paste the below commands as a batch: 
+# Update package lists
+sudo apt update
+sudo apt install vim wget  git -y
+
+# Install Java Development Kit (JDK) for Jenkins
+sudo apt install fontconfig openjdk-17-jre -y
+
+# Download and install Jenkins
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install jenkins
+
+# Start Jenkins service
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+
+
+Install Python and docker:
+sudo apt update
+sudo apt install python3 python3-pip
+For Ubuntu/Debian (Docker):
+sudo apt-get update
+sudo apt-get install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+
+ 
+ 
+Step 5: Login into Jenkins using the password
+Copy the password from the below path:
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+Open a web browser and navigate to http://<public-ip-address>:8080
+Step 6: Configure Jenkins:
+Access the Jenkins at http://your_server_ip:8080, paste the password, and follow the setup wizard.
+ 
+“Install Suggested Plugins”
+  DevCodeLearn_123
+“Create First Admin User” 
+1.	Username: DevCodeLearn
+2.	Password: DevCodeLearn_123
+3.	Confirm password: DevCodeLearn_123
+4.	Full name: DevCodeLearn_Ga3
+ 
+Instance Configuration -->Save and Finish
+ 
+“Start using Jenkins”
+ 
+Step7: Install the necessary plugins
+Go to Jenkins Dashboard  Click on Manage Jenkins --> Select Manage Plugins -->Go to the Available tab.
+  
+Search for the plugins listed and install them.
+Pipeline: GitHub
+Git Plugin
+GitHub Organization Folder  GitHub Branch Source Plugin
+GitHub Integration 
+Docker Pipeline 
+Docker Commons 
+Docker Credentials / Docker
+dashboard view
+Build Pipeline
+Deploy to container
+maven integration
+Email Extension Template
+                                              
+Step 8: Set Up CI/CD Pipeline
+Step 8.1: Configure Jenkins to integrate with your version control system (e.g., Git, GitHub, GitLab):
+1.	Configure Jenkins Credentials: 
+If using HTTPS authentication, choose Username with password:
+•	Username: Your GitHub username.
+Step 1: Retrieve Your GitHub Username: Your GitHub username is displayed on your profile page, under your profile picture and right next to your display name.
+  •	Password: GitHub token (GitHub tokens are safer than using passwords).
+Step 2: Generate a GitHub Personal Access Token (PAT) 
+github_pat :  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
+                                              
+To generate a personal access token (PAT), which is used for authentication when interacting with GitHub, follow these steps:
+1.	Go to GitHub Settings:
+o	Once logged in, click on your profile picture in the top-right corner and select Settings from the dropdown.
+2.	Access Developer Settings:
+o	On the left sidebar, scroll down to Developer Settings and click on it.
+3.	Access Tokens (Classic):
+o	Click on Personal access tokens under Developer settings.
+o	If you're using Jenkins or similar tools, choose Tokens (classic) and click on Generate new token (classic).
+4.	Generate New Token:
+o	Click on the button Generate new token (classic).
+5.	Configure the Token:
+o	Name: Give your token a descriptive name (e.g., "Jenkins Integration Token").
+o	Expiration: Choose how long you want the token to be valid (e.g., 30 days, 90 days, or set it to no expiration).
+o	Scopes:
+	Select the appropriate scopes for your use case. For Jenkins, you usually need the following scopes:
+	repo: Full control of private repositories (for access to both public and private repos).
+	admin:repo_hook: Access to modify repository webhooks.
+	read:org: Read access to organization membership (if applicable).
+o	If unsure, you can select repo for full repository access.
+6.	Generate the Token:
+o	Once you’ve selected the scopes, click Generate Token at the bottom of the page.
+7.	Copy the Token:
+o	After generating the token, you’ll be shown the token only once. Make sure to copy it and store it in a secure place, such as a password manager.
+o	If you lose it, you'll have to generate a new token.
+
+Jenkins_pat TOKEN: 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
+
+Step 3: Use the Token in Jenkins or Git Operations
+1.	In Jenkins: 
+o	When configuring Jenkins to interact with GitHub, go to Manage Jenkins > Manage Credentials > Add Credentials.
+o	Select Username with password.
+o	Use your GitHub username as the Username and the Personal Access Token as the Password.
+                                              
+2.	In Git Operations (Git CLI):
+o	If you're using Git on the command line and are prompted for a password, use your personal access token instead of your GitHub password.
+
+Step 4: Webhook Integration 
+ 
+GitHub Webhooks: These notify Jenkins whenever there's a push or a pull request to a repository, which triggers a build in Jenkins. However, the webhook itself doesn't manage how Jenkins accesses the GitHub repository.
+Jenkins Credentials: You still need to configure credentials in Jenkins to authenticate and clone the repository when a build starts. This is necessary regardless of whether you use HTTPS or SSH for pulling code from GitHub.
+
+1.	Go to your Github Repo--> Settings --> Webhook.
+2.	Click “Add Webhook” and set the payload URL to 
+http://your-jenkins-url/github-webhook/
+3.	Set the content type to application/Json and select “Just push the event”.
+4.	Save the webhook. This will trigger Jenkins builds automatically on GitHub pushes. 
+
+Integrate Github and Jenkins file: 
+
+withCredentials([string(credentialsId: 'jenkin1Github1', variable: 'GITHUB_PAT')]) {
+Go to Your GitHub Portal and create a PAT: 
+jenkin1: 
+In Jenkins: Add the token as a “Secret key”
+Name: jenkin1Github1
+type: secret key
+
+Step 8.2:  Create a new Jenkins pipeline project.
+DockerHub:  
+
+Jenkins:  Dockerhub username and secret key
+Add Jenkins User to Docker Group: Jenkins needs permissions to run Docker. Add the Jenkins user to the Docker group:
+Run the following command on the server where Jenkins is installed to add the jenkins user to the docker group:
+
+sudo usermod -aG docker jenkins
+
+sudo systemctl restart docker
+sudo systemctl restart jenkins
+docker ps
+Docker-Jenkins-Token1: dckr_pat_h6jGANj9IXDXm6-FIc8hF1Det3s
