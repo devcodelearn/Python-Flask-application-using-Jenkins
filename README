@@ -103,7 +103,7 @@ If using HTTPS authentication, choose Username with password:
 Step 1: Retrieve Your GitHub Username: Your GitHub username is displayed on your profile page, under your profile picture and right next to your display name.
   •	Password: GitHub token (GitHub tokens are safer than using passwords).
 Step 2: Generate a GitHub Personal Access Token (PAT) 
-github_pat :  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
+jenkins_pat :  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 --> github_jenkins_pat
                                               
 To generate a personal access token (PAT), which is used for authentication when interacting with GitHub, follow these steps:
 1.	Go to GitHub Settings:
